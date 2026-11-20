@@ -5,7 +5,6 @@ class ReservaRepository:
     def __init__(self):
         self.db = Database()
 
-<<<<<<< HEAD
     def obtener_capacidad_espacio(self, id_espacio: int):
         """Devuelve el aforo máximo registrado para un espacio."""
         conn = self.db.get_connection()
@@ -98,30 +97,6 @@ class ReservaRepository:
             raise Exception(f"Error al obtener reserva por ID: {str(e)}")
         finally:
             cursor.close()
-=======
-    def obtener_todas(self):
-        conn = self.db.get_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute("SELECT * FROM reserva WHERE estado = TRUE ORDER BY id_reserva DESC;")
-            reservas = cursor.fetchall()
-            return reservas
-        except Exception as e:
-            raise Exception(f"Error al obtener reservas: {str(e)}")
-        finally:
-            conn.close()
-
-    def obtener_por_id(self, reserva_id: int):
-        conn = self.db.get_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute("SELECT * FROM reserva WHERE id_reserva = %s AND estado = TRUE;", (reserva_id,))
-            reserva = cursor.fetchone()
-            return reserva
-        except Exception as e:
-            raise Exception(f"Error al obtener reserva por ID: {str(e)}")
-        finally:
->>>>>>> origin/main
             conn.close()
 
     def crear(self, reserva: Reserva):
@@ -175,7 +150,6 @@ class ReservaRepository:
         finally:
             conn.close()
 
-<<<<<<< HEAD
 
     def resolver_decision(
         self,
@@ -218,8 +192,6 @@ class ReservaRepository:
             cursor.close()
             conn.close()
 
-=======
->>>>>>> origin/main
     def eliminar(self, reserva_id: int):
         conn = self.db.get_connection()
         cursor = conn.cursor()

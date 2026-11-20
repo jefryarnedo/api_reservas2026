@@ -1,20 +1,13 @@
-<<<<<<< HEAD
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 
 
-=======
-from pydantic import BaseModel
-from typing import Optional
-
->>>>>>> origin/main
 class Usuario(BaseModel):
     id_usuario: Optional[int] = None
     nombre_completo: str
     correo_electronico: str
     telefono: Optional[str] = None
     id_rol: int
-<<<<<<< HEAD
     id_facultad: Optional[int] = None
     estado: Optional[bool] = True
 
@@ -41,6 +34,3 @@ class LoginRequest(BaseModel):
     # El usuario corresponde al correo institucional registrado en la tabla usuario.
     usuario: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=256)
-=======
-    id_facultad: Optional[int] = None
->>>>>>> origin/main

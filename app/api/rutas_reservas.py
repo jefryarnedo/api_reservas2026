@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import logging
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
@@ -36,10 +37,32 @@ def obtener_reserva(reserva_id: int, usuario_actual: dict = Depends(obtener_usua
         reserva = repo.obtener_por_id(reserva_id, usuario_actual)
         if not reserva:
             # 404 evita revelar si la reserva existe pero pertenece a otra persona.
+=======
+from fastapi import APIRouter, HTTPException
+from app.models.reserva import Reserva
+from app.repositories.reserva_repo import ReservaRepository
+
+router = APIRouter(prefix="/reservas", tags=["Gestión de Reservas"])
+repo = ReservaRepository()
+
+@router.get("/")
+def listar_reservas():
+    try:
+        return repo.obtener_todas()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{reserva_id}")
+def obtener_reserva(reserva_id: int):
+    try:
+        reserva = repo.obtener_por_id(reserva_id)
+        if not reserva:
+>>>>>>> origin/main
             raise HTTPException(status_code=404, detail="Reserva no encontrada")
         return reserva
     except HTTPException:
         raise
+<<<<<<< HEAD
     except Exception:
         raise HTTPException(status_code=500, detail="No fue posible consultar la reserva.")
 
@@ -90,6 +113,21 @@ def crear_reserva(reserva: Reserva, usuario_actual: dict = Depends(obtener_usuar
 @router.put("/{reserva_id}")
 def actualizar_reserva(reserva_id: int, reserva: Reserva, usuario_actual: dict = Depends(obtener_usuario_actual)):
     exigir_administrador_o_decano(usuario_actual)
+=======
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/")
+def crear_reserva(reserva: Reserva):
+    try:
+        nuevo_id = repo.crear(reserva)
+        return {"mensaje": "Reserva creada exitosamente", "id_reserva": nuevo_id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.put("/{reserva_id}")
+def actualizar_reserva(reserva_id: int, reserva: Reserva):
+>>>>>>> origin/main
     try:
         exito = repo.actualizar(reserva_id, reserva)
         if not exito:
@@ -97,6 +135,7 @@ def actualizar_reserva(reserva_id: int, reserva: Reserva, usuario_actual: dict =
         return {"mensaje": "Reserva actualizada correctamente"}
     except HTTPException:
         raise
+<<<<<<< HEAD
     except Exception:
         raise HTTPException(status_code=400, detail="No fue posible actualizar la reserva.")
 
@@ -104,6 +143,13 @@ def actualizar_reserva(reserva_id: int, reserva: Reserva, usuario_actual: dict =
 @router.delete("/{reserva_id}")
 def eliminar_reserva(reserva_id: int, usuario_actual: dict = Depends(obtener_usuario_actual)):
     exigir_administrador_o_decano(usuario_actual)
+=======
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/{reserva_id}")
+def eliminar_reserva(reserva_id: int):
+>>>>>>> origin/main
     try:
         exito = repo.eliminar(reserva_id)
         if not exito:
@@ -111,6 +157,7 @@ def eliminar_reserva(reserva_id: int, usuario_actual: dict = Depends(obtener_usu
         return {"mensaje": "Reserva eliminada correctamente"}
     except HTTPException:
         raise
+<<<<<<< HEAD
     except Exception:
         raise HTTPException(status_code=500, detail="No fue posible eliminar la reserva.")
 
@@ -156,3 +203,7 @@ def decidir_reserva(
             status_code=500,
             detail="No fue posible registrar la decisión. Revisa la terminal de FastAPI para ver el error SQL.",
         ) from e
+=======
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+>>>>>>> origin/main

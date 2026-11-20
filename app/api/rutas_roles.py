@@ -1,11 +1,15 @@
 from fastapi import APIRouter, HTTPException
+<<<<<<< HEAD
 from pydantic import BaseModel
+=======
+>>>>>>> origin/main
 from app.models.rol import Rol
 from app.repositories.rol_repo import RolRepository
 
 router = APIRouter(prefix="/roles", tags=["Gestión de Roles"])
 repo = RolRepository()
 
+<<<<<<< HEAD
 
 class EstadoRol(BaseModel):
     estado: bool
@@ -19,34 +23,57 @@ def listar_roles():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"No fue posible consultar los perfiles: {str(e)}")
 
+=======
+@router.get("/")
+def listar_roles():
+    try:
+        return repo.obtener_todos()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+>>>>>>> origin/main
 
 @router.get("/{rol_id}")
 def obtener_rol(rol_id: int):
     try:
         rol = repo.obtener_por_id(rol_id)
         if not rol:
+<<<<<<< HEAD
             raise HTTPException(status_code=404, detail="Perfil no encontrado o inactivo.")
+=======
+            raise HTTPException(status_code=404, detail="Rol no encontrado")
+>>>>>>> origin/main
         return rol
     except HTTPException:
         raise
     except Exception as e:
+<<<<<<< HEAD
         raise HTTPException(status_code=500, detail=f"No fue posible consultar el perfil: {str(e)}")
 
+=======
+        raise HTTPException(status_code=500, detail=str(e))
+>>>>>>> origin/main
 
 @router.post("/")
 def crear_rol(rol: Rol):
     try:
         nuevo_id = repo.crear(rol)
+<<<<<<< HEAD
         return {"mensaje": "Perfil creado correctamente.", "id_rol": nuevo_id}
     except Exception as e:
         mensaje = str(e)
         codigo = 409 if "Ya existe" in mensaje else 400
         raise HTTPException(status_code=codigo, detail=mensaje)
 
+=======
+        return {"mensaje": "Rol creado exitosamente", "id_rol": nuevo_id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+>>>>>>> origin/main
 
 @router.put("/{rol_id}")
 def actualizar_rol(rol_id: int, rol: Rol):
     try:
+<<<<<<< HEAD
         actualizado = repo.actualizar(rol_id, rol)
         if not actualizado:
             raise HTTPException(status_code=404, detail="Perfil no encontrado o inactivo.")
@@ -91,3 +118,25 @@ def eliminar_rol(rol_id: int):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+=======
+        exito = repo.actualizar(rol_id, rol)
+        if not exito:
+            raise HTTPException(status_code=404, detail="Rol no encontrado")
+        return {"mensaje": "Rol actualizado correctamente"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/{rol_id}")
+def eliminar_rol(rol_id: int):
+    try:
+        exito = repo.eliminar(rol_id)
+        if not exito:
+            raise HTTPException(status_code=404, detail="Rol no encontrado")
+        return {"mensaje": "Rol eliminado correctamente"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+>>>>>>> origin/main

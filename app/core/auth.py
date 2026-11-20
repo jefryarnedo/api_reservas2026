@@ -9,7 +9,6 @@ def obtener_usuario_actual(
         )
 
     carga = verificar_token_acceso(credenciales.credentials)
-    print("TOKEN CARGA:", carga)
 
     if not carga:
         raise HTTPException(
@@ -43,9 +42,8 @@ def obtener_usuario_actual(
         )
 
         usuario = cursor.fetchone()
-        print("USUARIO BD:", usuario)
 
-        if not usuario or int(usuario["id_rol"]) != int(carga["id_rol"]):
+        if not usuario:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="El usuario ya no tiene una sesión autorizada.",
@@ -57,4 +55,3 @@ def obtener_usuario_actual(
     finally:
         cursor.close()
         conn.close()
-        

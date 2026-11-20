@@ -1,11 +1,3 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.core.database import Database
-from app.core.security import verificar_token_acceso
-
-_bearer = HTTPBearer(auto_error=False)
-
-
 def obtener_usuario_actual(
     credenciales: HTTPAuthorizationCredentials | None = Depends(_bearer),
 ):
@@ -17,17 +9,24 @@ def obtener_usuario_actual(
         )
 
     carga = verificar_token_acceso(credenciales.credentials)
+    print("TOKEN CARGA:", carga)
+
     if not carga:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="La sesión expiró o no es válida. Inicia sesión nuevamente.",
+            detail="La sesión expiró o no es válida.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     conn = Database().get_connection()
     if conn is None:
-        raise HTTPException(status_code=503, detail="No fue posible conectar con la base de datos.")
+        raise HTTPException(
+            status_code=503,
+            detail="No fue posible conectar con la base de datos."
+        )
+
     cursor = conn.cursor()
+
     try:
         cursor.execute(
             """
@@ -42,14 +41,20 @@ def obtener_usuario_actual(
             """,
             (int(carga["sub"]),),
         )
+
         usuario = cursor.fetchone()
+        print("USUARIO BD:", usuario)
+
         if not usuario or int(usuario["id_rol"]) != int(carga["id_rol"]):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="El usuario ya no tiene una sesión autorizada.",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
         return dict(usuario)
+
     finally:
         cursor.close()
         conn.close()
+        

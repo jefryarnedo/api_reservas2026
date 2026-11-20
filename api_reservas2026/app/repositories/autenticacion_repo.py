@@ -27,12 +27,12 @@ def crear_token(usuario: dict) -> str:
         raise RuntimeError("Configura AUTH_SECRET en el .env con al menos 32 caracteres.")
     ahora = int(time.time())
     payload = {
-        "sub": int(usuario["id_usuario"]),
-        "correo": usuario["correo_electronico"],
-        "rol": int(usuario["id_rol"]),
-        "iat": ahora,
-        "exp": ahora + 60 * 60 * 8,
-    }
+    "sub": int(usuario["id_usuario"]),
+    "correo": usuario["correo_electronico"],
+    "id_rol": int(usuario["id_rol"]),
+    "iat": ahora,
+    "exp": ahora + 60 * 60 * 8,
+}
     contenido = base64.urlsafe_b64encode(json.dumps(payload, separators=(",", ":")).encode()).decode().rstrip("=")
     firma = hmac.new(secreto.encode(), contenido.encode(), hashlib.sha256).digest()
     firma_texto = base64.urlsafe_b64encode(firma).decode().rstrip("=")

@@ -5,7 +5,11 @@ from app.api import (
     rutas_tipos_espacio, rutas_tipos_evento, rutas_recursos, rutas_espacios_recursos,
     rutas_bloqueos, rutas_check_ins, rutas_notificaciones, rutas_auditoria,
     rutas_modulos, rutas_modulosxrol, 
+<<<<<<< HEAD
+    rutas_reubicaciones, rutas_retroalimentaciones, rutas_reportes
+=======
     rutas_reubicaciones, rutas_retroalimentaciones
+>>>>>>> origin/main
 )
 
 app = FastAPI(
@@ -41,8 +45,16 @@ app.include_router(rutas_modulos.router)
 app.include_router(rutas_modulosxrol.router)
 app.include_router(rutas_reubicaciones.router)
 app.include_router(rutas_retroalimentaciones.router)
+<<<<<<< HEAD
+app.include_router(rutas_reportes.router)
+
+@app.get("/")
+def estado_api():
+    return {"mensaje": "La API de Reservas se encuentra en línea y funcional"}
+=======
 
 @app.get("/")
 def estado_api():
     return {"mensaje": "La API de Reservas se encuentra en línea y funcional"}
 #prueba github render
+>>>>>>> origin/main

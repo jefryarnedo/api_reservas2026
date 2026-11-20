@@ -5,6 +5,100 @@ class ReservaRepository:
     def __init__(self):
         self.db = Database()
 
+<<<<<<< HEAD
+    def obtener_capacidad_espacio(self, id_espacio: int):
+        """Devuelve el aforo máximo registrado para un espacio."""
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """
+                SELECT id_espacio, nombre_espacio, capacidad_aforo
+                FROM espacio
+                WHERE id_espacio = %s;
+                """,
+                (id_espacio,),
+            )
+            return cursor.fetchone()
+        except Exception as e:
+            raise Exception(f"Error al consultar la capacidad del espacio: {str(e)}") from e
+        finally:
+            cursor.close()
+            conn.close()
+
+    def obtener_todas(self, usuario_actual: dict):
+        """Docente consulta solo sus reservas; Administrador y Decano consultan todas."""
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        try:
+            if int(usuario_actual["id_rol"]) == 5:
+                cursor.execute(
+                    """
+                    SELECT r.*,
+                           u.nombre_completo AS nombre_solicitante,
+                           u.correo_electronico AS correo_solicitante
+                    FROM reserva r
+                    LEFT JOIN usuario u ON u.id_usuario = r.id_usuario
+                    WHERE r.estado = TRUE AND r.id_usuario = %s
+                    ORDER BY r.id_reserva DESC;
+                    """,
+                    (int(usuario_actual["id_usuario"]),),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT r.*,
+                           u.nombre_completo AS nombre_solicitante,
+                           u.correo_electronico AS correo_solicitante
+                    FROM reserva r
+                    LEFT JOIN usuario u ON u.id_usuario = r.id_usuario
+                    WHERE r.estado = TRUE
+                    ORDER BY r.id_reserva DESC;
+                    """
+                )
+            return cursor.fetchall()
+        except Exception as e:
+            raise Exception(f"Error al obtener reservas: {str(e)}")
+        finally:
+            cursor.close()
+            conn.close()
+
+    def obtener_por_id(self, reserva_id: int, usuario_actual: dict):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        try:
+            if int(usuario_actual["id_rol"]) == 5:
+                cursor.execute(
+                    """
+                    SELECT r.*,
+                           u.nombre_completo AS nombre_solicitante,
+                           u.correo_electronico AS correo_solicitante
+                    FROM reserva r
+                    LEFT JOIN usuario u ON u.id_usuario = r.id_usuario
+                    WHERE r.id_reserva = %s
+                      AND r.id_usuario = %s
+                      AND r.estado = TRUE;
+                    """,
+                    (reserva_id, int(usuario_actual["id_usuario"])),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT r.*,
+                           u.nombre_completo AS nombre_solicitante,
+                           u.correo_electronico AS correo_solicitante
+                    FROM reserva r
+                    LEFT JOIN usuario u ON u.id_usuario = r.id_usuario
+                    WHERE r.id_reserva = %s AND r.estado = TRUE;
+                    """,
+                    (reserva_id,),
+                )
+            return cursor.fetchone()
+        except Exception as e:
+            raise Exception(f"Error al obtener reserva por ID: {str(e)}")
+        finally:
+            cursor.close()
+=======
     def obtener_todas(self):
         conn = self.db.get_connection()
         cursor = conn.cursor()
@@ -27,6 +121,7 @@ class ReservaRepository:
         except Exception as e:
             raise Exception(f"Error al obtener reserva por ID: {str(e)}")
         finally:
+>>>>>>> origin/main
             conn.close()
 
     def crear(self, reserva: Reserva):
@@ -80,6 +175,51 @@ class ReservaRepository:
         finally:
             conn.close()
 
+<<<<<<< HEAD
+
+    def resolver_decision(
+        self,
+        reserva_id: int,
+        id_administrador: int,
+        decision: str,
+        motivo_rechazo: str | None = None,
+    ):
+        """Aprueba o rechaza una reserva pendiente y registra al administrador."""
+        conn = self.db.get_connection()
+        if conn is None:
+            raise RuntimeError("No fue posible conectar con PostgreSQL.")
+
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                """
+                UPDATE reserva
+                   SET estado_reserva = %s,
+                       id_aprobador = %s,
+                       motivo_rechazo = %s
+                 WHERE id_reserva = %s
+                   AND estado = TRUE
+                   AND LOWER(TRIM(estado_reserva)) = 'pendiente'
+                RETURNING id_reserva;
+                """,
+                (decision, id_administrador, motivo_rechazo, reserva_id),
+            )
+            actualizado = cursor.fetchone()
+            if actualizado is None:
+                conn.rollback()
+                return False
+
+            conn.commit()
+            return True
+        except Exception as e:
+            conn.rollback()
+            raise RuntimeError(f"Error SQL al registrar la decisión: {e}") from e
+        finally:
+            cursor.close()
+            conn.close()
+
+=======
+>>>>>>> origin/main
     def eliminar(self, reserva_id: int):
         conn = self.db.get_connection()
         cursor = conn.cursor()
